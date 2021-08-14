@@ -6,6 +6,9 @@ import axios  from 'axios';
 import {withAuth0} from "@auth0/auth0-react" 
 import Button from 'react-bootstrap/Button'
 import { AddBook } from './Component/AddBook';
+import UpdatedBook from './Component/UpdateBookForm';
+
+
 
 
 class MyFavoriteBooks extends React.Component {
@@ -71,7 +74,7 @@ class MyFavoriteBooks extends React.Component {
     }).catch(error=>alert(error))
   }
   
-  }
+  
   render() {
     return(
       <Jumbotron>
@@ -88,9 +91,9 @@ class MyFavoriteBooks extends React.Component {
            />
          }
 
-{
+          {
            this.state.showUpdateModel&&
-           <UpdateBook 
+           <UpdatedBook 
            show={this.state.showUpdateModel}
            handelClose={this.addModel}
            submitUpdateBook={this.submitUpdateBook}
@@ -100,8 +103,8 @@ class MyFavoriteBooks extends React.Component {
          }
          {
         this.state.books.length &&
-        {
-          this.state.books.map(book=>{
+
+         this.state.books.map((book,)=>{
             return(
             <div>
               <h1> {book.title}</h1>
@@ -110,9 +113,9 @@ class MyFavoriteBooks extends React.Component {
               <Button onClick={e => this.handelUpdateModel(book)} >Update</Button>
             </div>
           )})
-        }
+  }
       </Jumbotron>
-    )
+        )
   }
 }
 

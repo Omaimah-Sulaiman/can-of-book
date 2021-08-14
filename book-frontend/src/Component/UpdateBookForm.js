@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
-export class UpdateBookForm extends Component {
+export class UpdatedForm extends Component {
     render() {
         return (
             <div>
@@ -39,4 +39,4 @@ export class UpdateBookForm extends Component {
     }
 }
 
-export default UpdateBookForm
+export default UpdatedForm
