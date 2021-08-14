@@ -104,13 +104,13 @@ class MyFavoriteBooks extends React.Component {
          {
         this.state.books.length &&
 
-         this.state.books.map((book,)=>{
+         this.state.books.map((book,id)=>{
             return(
             <div>
               <h1> {book.title}</h1>
               <p>{book.description}</p>
               <Button onClick={(e)=> this.deleteBook(id) }>Remove</Button>
-              <Button onClick={e => this.handelUpdateModel(book)} >Update</Button>
+              <Button onClick={e => this.hbooandelUpdateModel(book)} >Update</Button>
             </div>
           )})
   }
