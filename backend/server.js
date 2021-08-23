@@ -1,77 +1,73 @@
-const express = require('express') // require the express package
+'use strict';
+
+const express = require('express');
+require('dotenv').config();
+const cors = require('cors');
 const app = express();
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa'); // we are going to use this package to connect to Auth0
+const mongoose = require('mongoose');
+const PORT = process.env.PORT || 3001
 const JWKSURI = process.env.JWKSURI;
+const MONGO_DB_URL =process.env.MONGO_DB_URL;
+const {seedUserData} = require('./models/user.model');
+const {getBooks} = require('./controller/book.controller');
+const {createBook} = require('./controller/book.controller');
+const {deleteBook}= require('./controller/book.controller');
+const {updateBook} = require('./controller/book.controller');
+ // it will decode the post body request data
 
-  // initialize your express app instance
 
-const mongoose=require('mongoose')
+mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
 
-require('dotenv').config()
-
-const { 
-    getBooks , 
-    createBook,
-     updateBook,
-    deleteBook} = require('./controller/book.controller')
-
-const PORT = process.env.PORT
-
-const MONGO_DB_BOOK= process.env.MONGO_DB_BOOK
-
-const cors =require('cors');
-app.use(cors())
-
-const client = jwksClient({
-    // we will send a request to Auth0 to connect to it
-    jwksUri: JWKSURI
-  });
-
+app.use(cors());
 app.use(express.json());
 
 
-mongoose.connect(MONGO_DB_BOOK,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-);
-const {seedBooksCollection}=require('./models/book')
+const client = jwksClient({
+  jwksUri: JWKSURI
+});
 
-seedBooksCollection();
-// a server endpoint 
-app.get('/', // our endpoint name
- function (req, res) { // callback function of what we should do with our request
-  res.send('Hello World') // our endpoint function response
-})
-function getKey(header, callback) {
-    client.getSigningKey(header.kid, function (err, key) {
-      var signingKey = key.publicKey || key.rsaPublicKey;
-      callback(null, signingKey);
-    });
-  }
 
-app.get('/verify-token', (request, response) => {
-    // The token will be passed from the frontend to the backend using the request
-    // The request will be passing the token the request headers
-    const token = request.headers.authorization.split(' ')[1];
-    console.log(token);
-    // Once we got the token, we wil want to verify the token with JWT
-    jwt.verify(token, getKey, {}, (error, user) => {
-      if (error) {
-        response.send('invalid token');
-      }
-      response.json(user);
-    });
-    // response.send("got your token 🍕");
+
+function getKey(header, callback){
+  client.getSigningKey(header.kid, function(err, key) {
+    var signingKey = key.publicKey || key.rsaPublicKey;
+    callback(null, signingKey);
   });
-  
+}
+ 
 
-app.get('/books',getBooks)
 
-app.post('/book',createBook)
+app.get('/test', (request, response) => {
+const token = request.headers.authorization.split(' ')[1]; // take the token from frontend
+jwt.verify(token, getKey, {}, (error, user) =>{ // pass it to the auth to check the token if its valid
+  if(error){
+    response.send('invalid token');
+  }
+  response.json(user);//send user information in the state from auth
+});
+});
 
-app.put('/book/:book_id',updateBook )
+// seedUserData();
 
-app.delete('/book/:book_id',deleteBook )
-//  app.listen(PORT,() =>{
-//      console.log(`Server stand on ${PORT}`);
-//  } )
+app.get('/books',getBooks);
+app.post('/book',createBook);
+app.delete('/book/:book_id', deleteBook);
+app.put('/book/:book_id' , updateBook);
+
+
+
+
+ 
+  // TODO: 
+  // STEP 1: get the jwt from the headers
+  // STEP 2. use the jsonwebtoken library to verify that it is a valid jwt
+  // jsonwebtoken dock - https://www.npmjs.com/package/jsonwebtoken
+  // STEP 3: to prove that everything is working correctly, send the opened jwt back to the front-end
+
+
+
+  app.listen(PORT, () => {
+    console.log(`Server started on ${PORT}`);
+  });

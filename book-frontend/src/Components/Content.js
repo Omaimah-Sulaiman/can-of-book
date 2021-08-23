@@ -38,7 +38,7 @@ export class Content extends Component {
                 {this.state.user.nickname &&
                 <div>
                 <p>
-                    Data from Backend 👋😇  : {this.state.user.name}
+                   {this.state.user.name}
                 </p>
     </div>
     }
